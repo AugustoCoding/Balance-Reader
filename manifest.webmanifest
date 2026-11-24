@@ -1,0 +1,12 @@
+{
+  "name": "Balance Reader",
+  "short_name": "Balance Reader",
+  "description": "Registrador de dados para balanças de laboratório pela porta USB/serial.",
+  "lang": "pt-BR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3f5f9",
+  "theme_color": "#2563eb",
+  "icons": [{ "src": "icon.png", "sizes": "256x256", "type": "image/png", "purpose": "any" }]
+}

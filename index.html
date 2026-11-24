@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Balance Reader</title>
+  <meta name="description" content="Registrador de dados para balanças de laboratório pela porta USB/serial, direto no navegador.">
+  <meta name="theme-color" content="#2563eb">
+  <link rel="icon" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    // apply the saved theme before first paint
+    try {
+      const t = JSON.parse(localStorage.getItem('balance-reader:settings') || '{}').theme;
+      if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+    } catch {}
+  </script>
+  <script type="module" src="src/app.js"></script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-logo" viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M8 21h8"/><path d="M5 7h14"/><path d="m5 7-3 7a3 3 0 0 0 6 0Z"/><path d="m19 7-3 7a3 3 0 0 0 6 0Z"/></symbol>
+    <symbol id="i-plug" viewBox="0 0 24 24"><path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/></symbol>
+    <symbol id="i-unplug" viewBox="0 0 24 24"><path d="m19 5 3-3"/><path d="m2 22 3-3"/><path d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"/><path d="M7.5 13.5 10 11"/><path d="M10.5 16.5 13 14"/><path d="m12 6 6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5Z"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-tare" viewBox="0 0 24 24"><path d="M3 18h18"/><path d="M6 18v-3a6 6 0 0 1 12 0v3"/><path d="M12 9V5"/><path d="M10 5h4"/></symbol>
+    <symbol id="i-zero" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="6" ry="9"/><path d="m8 18 8-12"/></symbol>
+    <symbol id="i-printer" viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8" rx="1"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><path d="m4 17 6-6-6-6"/><path d="M12 19h8"/></symbol>
+    <symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M10 2h4"/></symbol>
+    <symbol id="i-beaker" viewBox="0 0 24 24"><path d="M4.5 3h15"/><path d="M6 3v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3"/><path d="M6 14h12"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+    <symbol id="i-auto" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/><path d="M12 3a9 9 0 0 1 0 18" fill="currentColor"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></symbol>
+    <symbol id="i-chip" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/></symbol>
+    <symbol id="i-usb" viewBox="0 0 24 24"><circle cx="10" cy="7" r="1"/><circle cx="4" cy="20" r="1"/><path d="M4.7 19.3 19 5"/><path d="m21 3-3 1 2 2Z"/><path d="M9.26 7.68 5 12l2 5"/><path d="m10 14 5 2 3.5-3.5"/><path d="m18 12 1-1 1 1-1 1Z"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M8 13h2M14 13h2M8 17h2M14 17h2"/></symbol>
+    <symbol id="i-save" viewBox="0 0 24 24"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+    <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M6 13h.01M18 13h.01M8 16h8"/></symbol>
+  </defs>
+</svg>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark"><svg class="icon"><use href="#i-logo"/></svg></span>
+    <div class="brand-text">
+      <strong>Balance Reader</strong>
+      <button class="profile-chip" id="profileChip" type="button" title="Trocar a balança">
+        <span id="profileName">—</span><span class="dot-sep">·</span><span id="profileSerial" class="mono">—</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="topbar-actions">
+    <div class="conn-pill" id="connPill" data-state="off">
+      <span class="pulse"></span><span id="connText">Desconectado</span>
+    </div>
+    <div class="menu-wrap">
+      <button class="btn btn-primary" id="connectBtn" type="button" aria-haspopup="menu" aria-expanded="false">
+        <svg class="icon"><use href="#i-plug"/></svg><span id="connectLabel">Conectar</span>
+        <svg class="icon icon-sm chev"><use href="#i-chevron"/></svg>
+      </button>
+      <div class="menu" id="connectMenu" role="menu" hidden></div>
+    </div>
+    <button class="btn btn-icon" id="themeBtn" type="button" title="Tema"><svg class="icon"><use href="#i-auto"/></svg></button>
+    <button class="btn btn-icon" id="settingsBtn" type="button" title="Configurações"><svg class="icon"><use href="#i-sliders"/></svg></button>
+  </div>
+</header>
+
+<div class="banners" id="banners"></div>
+
+<main class="layout">
+  <div class="col col-left">
+  <!-- live weight -->
+  <section class="card hero" aria-labelledby="heroTitle">
+    <div class="hero-head">
+      <h2 id="heroTitle" class="eyebrow">Peso <span id="netHint" class="net-hint" hidden>líquido</span></h2>
+      <span class="badge" id="stableBadge" data-state="none">Sem leitura</span>
+    </div>
+    <div class="readout" id="readout" aria-live="polite">
+      <span class="readout-value" id="weightValue">—</span>
+      <span class="readout-unit" id="weightUnit">g</span>
+    </div>
+    <div class="readout-sub">
+      <span id="readoutSub">Conecte a balança ou use o simulador</span>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-record" id="recordBtn" type="button" disabled>
+        <svg class="icon"><use href="#i-play"/></svg><span>Iniciar gravação</span>
+      </button>
+      <div class="controls-row">
+        <button class="btn" id="tareBtn" type="button" disabled title="Tarar (T)"><svg class="icon"><use href="#i-tare"/></svg>Tarar</button>
+        <button class="btn" id="zeroBtn" type="button" disabled hidden title="Zerar"><svg class="icon"><use href="#i-zero"/></svg>Zerar</button>
+        <button class="btn" id="printBtn" type="button" disabled hidden title="Pedir uma leitura (P)"><svg class="icon"><use href="#i-printer"/></svg>Ler agora</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- session -->
+  <section class="card session" aria-labelledby="sessionTitle">
+    <div class="card-head">
+      <h2 id="sessionTitle"><svg class="icon"><use href="#i-timer"/></svg>Sessão</h2>
+      <span class="muted small" id="intervalLabel"></span>
+    </div>
+    <div class="elapsed mono" id="elapsed">00:00:00</div>
+    <div class="progress" id="autoStopProgress" hidden><span></span></div>
+    <label class="switch-row">
+      <input type="checkbox" id="autoStopOn" class="switch">
+      <span>Parar automaticamente em</span>
+      <input type="text" id="autoStopValue" class="input input-time mono" value="00:10:00" inputmode="numeric" aria-label="Duração (hh:mm:ss)">
+    </label>
+    <p class="muted small" id="autoStopHint"></p>
+    <div class="session-actions">
+      <div class="menu-wrap grow">
+        <button class="btn btn-block" id="exportBtn" type="button" disabled aria-haspopup="menu">
+          <svg class="icon"><use href="#i-download"/></svg>Exportar<svg class="icon icon-sm chev"><use href="#i-chevron"/></svg>
+        </button>
+        <div class="menu" id="exportMenu" role="menu" hidden>
+          <button role="menuitem" data-export="xlsx"><svg class="icon"><use href="#i-file"/></svg><span><strong>Excel (.xlsx)</strong><small>Planilha com gráfico</small></span></button>
+          <button role="menuitem" data-export="csv"><svg class="icon"><use href="#i-file"/></svg><span><strong>CSV</strong><small id="csvHint">Separador ;</small></span></button>
+        </div>
+      </div>
+      <button class="btn" id="clearBtn" type="button" disabled title="Começar uma nova sessão"><svg class="icon"><use href="#i-reset"/></svg>Nova</button>
+    </div>
+  </section>
+
+  <!-- container -->
+  <section class="card container-card" aria-labelledby="containerTitle">
+    <div class="card-head">
+      <h2 id="containerTitle"><svg class="icon"><use href="#i-beaker"/></svg>Recipiente</h2>
+    </div>
+    <p class="muted small">Peso descontado de todas as leituras, inclusive as já feitas.</p>
+    <div class="input-group">
+      <input type="text" id="containerInput" class="input mono" inputmode="decimal" placeholder="0,000" aria-label="Peso do recipiente">
+      <span class="input-addon" id="containerUnit">g</span>
+      <button class="btn" id="containerApply" type="button">Aplicar</button>
+    </div>
+    <button class="btn btn-ghost btn-sm" id="containerFromReading" type="button" disabled>Usar o peso atual</button>
+  </section>
+
+  <!-- simulator -->
+  <section class="card sim-card" id="simCard" hidden aria-labelledby="simTitle">
+    <div class="card-head">
+      <h2 id="simTitle"><svg class="icon"><use href="#i-chip"/></svg>Simulador</h2>
+      <span class="muted small" id="simFormat"></span>
+    </div>
+    <p class="muted small">Coloque ou retire massa do prato virtual.</p>
+    <div class="chip-grid">
+      <button class="btn btn-sm" data-place="-10">−10 g</button>
+      <button class="btn btn-sm" data-place="-1">−1 g</button>
+      <button class="btn btn-sm" data-place="1">+1 g</button>
+      <button class="btn btn-sm" data-place="10">+10 g</button>
+      <button class="btn btn-sm" data-place="100">+100 g</button>
+      <button class="btn btn-sm" data-place="clear">Esvaziar</button>
+    </div>
+  </section>
+
+  </div>
+
+  <div class="col col-right">
+  <!-- stats -->
+  <section class="stats" aria-label="Estatísticas">
+    <div class="stat"><span class="stat-label">Leituras</span><span class="stat-value" id="stCount">0</span><span class="stat-foot" id="stStable">—</span></div>
+    <div class="stat stat-accent"><span class="stat-label">Média</span><span class="stat-value" id="stMean">—</span><span class="stat-foot" id="stMeanUnc">± —</span></div>
+    <div class="stat"><span class="stat-label">Incerteza atual</span><span class="stat-value" id="stUnc">—</span><span class="stat-foot" id="stWindow">últimas 5 leituras</span></div>
+    <div class="stat"><span class="stat-label">Mínimo</span><span class="stat-value" id="stMin">—</span><span class="stat-foot" id="stUnitMin">g</span></div>
+    <div class="stat"><span class="stat-label">Máximo</span><span class="stat-value" id="stMax">—</span><span class="stat-foot" id="stRange">amplitude —</span></div>
+  </section>
+
+  <!-- chart -->
+  <section class="card chart-card" aria-labelledby="chartTitle">
+    <div class="card-head">
+      <h2 id="chartTitle">Histórico</h2>
+      <div class="segmented" id="rangeSeg" role="radiogroup" aria-label="Período exibido">
+        <button role="radio" data-range="60">1 min</button>
+        <button role="radio" data-range="300">5 min</button>
+        <button role="radio" data-range="1800">30 min</button>
+        <button role="radio" data-range="0">Tudo</button>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="chart" aria-label="Gráfico do peso ao longo do tempo" role="img"></canvas>
+      <div class="chart-tip" id="chartTip" hidden></div>
+    </div>
+    <div class="legend">
+      <span><i class="lg-line"></i>Peso</span>
+      <span><i class="lg-mean"></i>Média</span>
+      <span><i class="lg-dot"></i>Leitura instável</span>
+    </div>
+  </section>
+
+  <!-- console -->
+  <section class="card console-card" aria-labelledby="consoleTitle">
+    <details id="consoleDetails">
+      <summary class="card-head">
+        <h2 id="consoleTitle"><svg class="icon"><use href="#i-terminal"/></svg>Comunicação serial</h2>
+        <span class="muted small" id="consoleCount">o que a balança envia, linha a linha</span>
+        <svg class="icon icon-sm chev"><use href="#i-chevron"/></svg>
+      </summary>
+      <div class="console" id="console" aria-live="off"></div>
+      <form class="console-send" id="consoleForm">
+        <input type="text" class="input mono" id="consoleInput" placeholder="Enviar comando à balança (ex.: T, SI, \eP)" autocomplete="off" spellcheck="false">
+        <button class="btn" type="submit" id="consoleSend" disabled><svg class="icon"><use href="#i-send"/></svg>Enviar</button>
+        <button class="btn btn-ghost" type="button" id="consoleClear">Limpar</button>
+      </form>
+    </details>
+  </section>
+  </div>
+</main>
+
+<footer class="footer">
+  <span><svg class="icon icon-sm"><use href="#i-keyboard"/></svg> <kbd>Espaço</kbd> grava/pausa · <kbd>T</kbd> tara · <kbd>Ctrl</kbd>+<kbd>S</kbd> exporta</span>
+  <span class="muted">Os dados ficam só neste navegador. <a href="https://github.com/AugustoCoding/Balance-Reader" target="_blank" rel="noopener">Código-fonte</a></span>
+</footer>
+
+<!-- settings -->
+<dialog class="modal settings" id="settings" aria-labelledby="settingsTitle">
+  <form method="dialog" class="modal-shell" id="settingsForm">
+    <header class="modal-head">
+      <h2 id="settingsTitle">Configurações</h2>
+      <button class="btn btn-icon btn-ghost" value="cancel" formnovalidate title="Fechar"><svg class="icon"><use href="#i-x"/></svg></button>
+    </header>
+    <div class="modal-body">
+      <nav class="tabs" role="tablist" aria-orientation="vertical">
+        <button type="button" role="tab" data-tab="balance" aria-selected="true">Balança</button>
+        <button type="button" role="tab" data-tab="serial">Conexão</button>
+        <button type="button" role="tab" data-tab="format">Formato dos dados</button>
+        <button type="button" role="tab" data-tab="commands">Comandos</button>
+        <button type="button" role="tab" data-tab="acq">Gravação</button>
+        <button type="button" role="tab" data-tab="export">Exportação e tela</button>
+      </nav>
+
+      <div class="tab-panels">
+        <section class="tab-panel" data-panel="balance">
+          <h3>Qual é a sua balança?</h3>
+          <p class="muted">Escolha um modelo pronto ou crie o seu. Tudo pode ser ajustado nas outras abas.</p>
+          <div class="profile-grid" id="profileGrid"></div>
+          <div class="callout" id="profileNotes"></div>
+          <div class="row-actions">
+            <button type="button" class="btn btn-sm" id="profileSaveAs"><svg class="icon"><use href="#i-save"/></svg>Salvar como perfil próprio</button>
+            <button type="button" class="btn btn-sm" id="profileExport"><svg class="icon"><use href="#i-download"/></svg>Exportar perfil</button>
+            <label class="btn btn-sm"><svg class="icon"><use href="#i-upload"/></svg>Importar perfil<input type="file" id="profileImport" accept=".json,application/json" hidden></label>
+            <button type="button" class="btn btn-sm btn-danger-ghost" id="profileDelete" hidden><svg class="icon"><use href="#i-trash"/></svg>Excluir</button>
+          </div>
+        </section>
+
+        <section class="tab-panel" data-panel="serial" hidden>
+          <h3>Parâmetros da porta serial</h3>
+          <p class="muted">Precisam ser iguais aos do menu de comunicação da balança. Na dúvida, use <em>Detectar</em>.</p>
+          <div class="form-grid">
+            <label class="field"><span>Velocidade (baud)</span><select class="input" id="fBaud"></select></label>
+            <label class="field"><span>Bits de dados</span><select class="input" id="fDataBits"></select></label>
+            <label class="field"><span>Paridade</span><select class="input" id="fParity"></select></label>
+            <label class="field"><span>Stop bits</span><select class="input" id="fStopBits"></select></label>
+            <label class="field"><span>Controle de fluxo</span><select class="input" id="fFlow"></select></label>
+          </div>
+          <div class="detect">
+            <button type="button" class="btn" id="detectBtn"><svg class="icon"><use href="#i-search"/></svg>Detectar automaticamente</button>
+            <p class="muted small" id="detectStatus">Testa as combinações mais comuns até encontrar leituras válidas. Deixe a balança ligada e enviando dados (ou o programa pede o peso, se houver comando).</p>
+          </div>
+        </section>
+
+        <section class="tab-panel" data-panel="format" hidden>
+          <h3>Como ler o peso</h3>
+          <div class="radio-cards">
+            <label class="radio-card"><input type="radio" name="fMode" value="auto"><span><strong>Automático</strong><small>Procura um número seguido da unidade (g, kg, mg, ct…). Serve para a maioria das balanças.</small></span></label>
+            <label class="radio-card"><input type="radio" name="fMode" value="regex"><span><strong>Expressão regular</strong><small>Para formatos especiais. Use o grupo <code>(?&lt;valor&gt;…)</code> e, se quiser, <code>(?&lt;unidade&gt;…)</code>.</small></span></label>
+          </div>
+          <label class="field" id="fRegexField"><span>Expressão regular</span><input class="input mono" id="fRegex" spellcheck="false" placeholder="(?<valor>[+-]?\d+[.,]\d+)\s*(?<unidade>g|kg)"></label>
+          <div class="form-grid">
+            <label class="field"><span>Unidade padrão</span><input class="input mono" id="fUnit" maxlength="6"></label>
+            <label class="field"><span>Estável quando a linha casa com</span><input class="input mono" id="fStable" spellcheck="false" placeholder="ex.: ^ST"></label>
+            <label class="field"><span>Instável quando casa com</span><input class="input mono" id="fUnstable" spellcheck="false" placeholder="ex.: ^US"></label>
+            <label class="field"><span>Ignorar linhas que casam com</span><input class="input mono" id="fIgnore" spellcheck="false" placeholder="ex.: ^OL"></label>
+          </div>
+          <p class="field-error" id="fRegexError" hidden></p>
+          <div class="tester">
+            <div class="tester-head"><strong>Teste</strong><span class="muted small">Cole linhas do manual ou do console serial para ver como são lidas.</span></div>
+            <textarea class="input mono" id="fTest" rows="5" spellcheck="false"></textarea>
+            <div class="tester-out" id="fTestOut"></div>
+          </div>
+        </section>
+
+        <section class="tab-panel" data-panel="commands" hidden>
+          <h3>Comandos enviados à balança</h3>
+          <p class="muted">Deixe em branco o que a balança não aceita. Escapes: <code>\r</code> <code>\n</code> <code>\e</code> (ESC) <code>\x1B</code>.</p>
+          <div class="form-grid">
+            <label class="field"><span>Final de linha</span><select class="input" id="fEnding"></select></label>
+            <label class="field"><span>Tarar</span><input class="input mono" id="fTare" spellcheck="false"></label>
+            <label class="field"><span>Zerar</span><input class="input mono" id="fZero" spellcheck="false"></label>
+            <label class="field"><span>Pedir leitura (imprimir)</span><input class="input mono" id="fPrint" spellcheck="false"></label>
+          </div>
+          <h4>Consulta automática</h4>
+          <p class="muted small">Para balanças que só respondem quando perguntadas: envia o comando abaixo repetidamente enquanto estiver conectado.</p>
+          <div class="form-grid">
+            <label class="field"><span>Comando</span><input class="input mono" id="fPoll" spellcheck="false" placeholder="ex.: SI"></label>
+            <label class="field"><span>A cada (s)</span><input class="input mono" id="fPollInterval" inputmode="decimal" placeholder="0 = desligado"></label>
+          </div>
+        </section>
+
+        <section class="tab-panel" data-panel="acq" hidden>
+          <h3>Gravação</h3>
+          <div class="form-grid">
+            <label class="field"><span>Intervalo mínimo entre leituras (s)</span><input class="input mono" id="fInterval" inputmode="decimal"><small class="muted">0 grava todas as que a balança enviar.</small></label>
+            <label class="field"><span>Incerteza: nº de leituras da janela</span><input class="input mono" id="fWindow" inputmode="numeric"><small class="muted">Desvio padrão das últimas N leituras.</small></label>
+          </div>
+          <h4>Simulador</h4>
+          <label class="field"><span>Formato que o simulador imita</span><select class="input" id="fSim"></select></label>
+        </section>
+
+        <section class="tab-panel" data-panel="export" hidden>
+          <h3>Arquivo CSV</h3>
+          <div class="radio-cards" id="fCsv"></div>
+          <h3>Aparência</h3>
+          <div class="segmented segmented-lg" id="fTheme" role="radiogroup">
+            <button type="button" role="radio" data-theme-opt="auto"><svg class="icon"><use href="#i-auto"/></svg>Sistema</button>
+            <button type="button" role="radio" data-theme-opt="light"><svg class="icon"><use href="#i-sun"/></svg>Claro</button>
+            <button type="button" role="radio" data-theme-opt="dark"><svg class="icon"><use href="#i-moon"/></svg>Escuro</button>
+          </div>
+        </section>
+      </div>
+    </div>
+    <footer class="modal-foot">
+      <span class="muted small" id="settingsDirty"></span>
+      <button class="btn" value="cancel" formnovalidate>Cancelar</button>
+      <button class="btn btn-primary" value="save" id="settingsSave">Salvar</button>
+    </footer>
+  </form>
+</dialog>
+
+<dialog class="modal confirm" id="confirm">
+  <form method="dialog" class="modal-shell">
+    <div class="confirm-body">
+      <span class="confirm-icon"><svg class="icon"><use href="#i-alert"/></svg></span>
+      <div class="confirm-main"><h2 id="confirmTitle"></h2><p id="confirmText" class="muted"></p><input class="input" id="confirmInput" hidden autocomplete="off"></div>
+    </div>
+    <footer class="modal-foot">
+      <button class="btn" value="no" id="confirmNo">Cancelar</button>
+      <button class="btn btn-primary" value="yes" id="confirmYes">OK</button>
+    </footer>
+  </form>
+</dialog>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+</body>
+</html>

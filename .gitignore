@@ -1,0 +1,18 @@
+node_modules/
+
+# Local tooling
+.claude/
+
+# Leftovers from the old Python version
+.venv/
+venv/
+__pycache__/
+.pytest_cache/
+build/
+dist/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
